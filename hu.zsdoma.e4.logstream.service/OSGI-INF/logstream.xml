@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="hu.zsdoma.LogStreamService">
+   <implementation class="hu.zsdoma.e4.logstream.service.LogStreamServiceImpl"/>
+   <service>
+      <provide interface="hu.zsdoma.e4.logstream.service.LogStreamService"/>
+   </service>
+</scr:component>

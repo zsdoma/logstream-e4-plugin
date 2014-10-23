@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: LogStreamService
+Bundle-SymbolicName: hu.zsdoma.e4.logstream.service
+Bundle-Version: 0.0.1.qualifier
+Bundle-Activator: hu.zsdoma.e4.logstream.service.Activator
+Bundle-Vendor: hu.zsdoma
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Service-Component: OSGI-INF/*.xml,
+ OSGI-INF/logstream.xml
+Import-Package: org.eclipse.osgi.framework.console;version="1.0.0",
+ org.osgi.framework;version="1.3.0",
+ org.osgi.util.tracker;version="1.3.1"
+Bundle-ActivationPolicy: lazy
