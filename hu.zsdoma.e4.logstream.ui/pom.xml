@@ -12,6 +12,12 @@
   <description>A simple log viewr plugin.</description>
 
   <build>
+    <sourceDirectory>src</sourceDirectory>
+    <!-- <resources> -->
+    <!-- <resource> -->
+    <!-- <directory>src/main/resources</directory> -->
+    <!-- </resource> -->
+    <!-- </resources> -->
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -58,4 +64,13 @@
       </plugin>
     </plugins>
   </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>hu.zsdoma</groupId>
+      <artifactId>hu.zsdoma.e4.logstream.service</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+<!--       <type>eclipse-plugin</type> -->
+    </dependency>
+  </dependencies>
 </project>
