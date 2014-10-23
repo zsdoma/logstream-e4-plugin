@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+    <extension point="org.eclipse.ui.views">
+        <category name="LogStream" id="hu.zsdoma.e4.logstream.ui"/>
+        <view
+            id="hu.zsdoma.e4.logstream.ui.view.LogStreamView"
+            category="hu.zsdoma.e4.logstream.ui"
+            icon="icons/sample.gif"
+            class="hu.zsdoma.e4.logstream.ui.view.LogStreamView"
+            name="LogStreamView">
+     </view>
+    </extension>
+</plugin>
