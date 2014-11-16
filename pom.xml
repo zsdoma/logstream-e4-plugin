@@ -18,7 +18,7 @@
 
   <modules>
     <module>hu.zsdoma.e4.logstream.ui</module>
-    <module>hu.zsdoma.e4.logstream.service</module>
+<!--     <module>hu.zsdoma.e4.logstream.service</module> -->
   </modules>
 
   <dependencies>

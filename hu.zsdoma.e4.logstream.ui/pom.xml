@@ -66,11 +66,10 @@
   </build>
 
   <dependencies>
-    <dependency>
-      <groupId>hu.zsdoma</groupId>
-      <artifactId>hu.zsdoma.e4.logstream.service</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-<!--       <type>eclipse-plugin</type> -->
-    </dependency>
+<!--     <dependency> -->
+<!--       <groupId>hu.zsdoma</groupId> -->
+<!--       <artifactId>hu.zsdoma.e4.logstream.service</artifactId> -->
+<!--       <version>0.0.1-SNAPSHOT</version> -->
+<!--     </dependency> -->
   </dependencies>
 </project>
