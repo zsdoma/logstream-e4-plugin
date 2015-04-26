@@ -36,9 +36,9 @@ public class LogStreamCommandComponent implements CommandProvider,
 	}
 
 	@Override
-	public void onStreamChanged(List<String> pufferedLines) {
-		for (String string : pufferedLines) {
-			System.out.println(string);
+	public void onStreamChanged(List<LoggerLineDTO> pufferedLines) {
+		for (LoggerLineDTO event : pufferedLines) {
+			System.out.println(event.getMessage());
 		}
 	}
 

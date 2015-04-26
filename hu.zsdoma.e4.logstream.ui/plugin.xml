@@ -11,4 +11,13 @@
             name="LogStreamView">
      </view>
     </extension>
+    
+    <!-- preferences staffs -->
+    <!--<extension
+      point = "org.eclipse.ui.preferencePages">
+       <page id="hu.zsdoma.e4.logstream.preferences.page1"
+      class="u.zsdoma.e4.logstream.preferences.LogStreamPreferencesPage"
+            name="%PreferencePage.name">
+       </page>
+   </extension>-->
 </plugin>
