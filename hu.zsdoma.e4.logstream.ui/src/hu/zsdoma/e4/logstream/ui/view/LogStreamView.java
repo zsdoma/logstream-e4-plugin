@@ -51,7 +51,7 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
     simpleDateFormat = new SimpleDateFormat();
   }
 
-  public void createClearMenu() {
+  private void createClearMenu() {
     clearAction = new Action() {
       @Override
       public void run() {
@@ -65,7 +65,7 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
         .getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
   }
 
-  public void createMenu(final IMenuManager menuManager) {
+  private void createMenu(final IMenuManager menuManager) {
     menuManager.add(clearAction);
     menuManager.add(new Separator());
     menuManager.add(openFileAction);
@@ -100,9 +100,11 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
 
   @Override
   public void createPartControl(final Composite parent) {
-    createTable(parent);
-    createActions();
-    createActionBar();
+    if (!parent.isDisposed()) {
+      createTable(parent);
+      createActions();
+      createActionBar();
+    }
   }
 
   private void createTable(final Composite parent) {
@@ -139,7 +141,7 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
     column.setText(title);
   }
 
-  public void createToolBar(final IToolBarManager toolBarManager) {
+  private void createToolBar(final IToolBarManager toolBarManager) {
     toolBarManager.add(openFileAction);
     toolBarManager.add(clearAction);
     toolBarManager.add(closeAction);
@@ -152,20 +154,23 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
 
   @Override
   public void onStreamChanged(final List<LoggerLineDTO> pufferedLines) {
-    table.getDisplay().syncExec(() -> {
-      TableItem tableItem = null;
-      for (LoggerLineDTO loggerLineDTO : pufferedLines) {
-        tableItem = createRow(loggerLineDTO);
-      }
-      if (tableItem != null) {
-        table.showItem(tableItem);
-      }
-    } );
+    if (hasTable()) {
+      table.getDisplay().syncExec(() -> {
+        TableItem tableItem = null;
+        for (LoggerLineDTO loggerLineDTO : pufferedLines) {
+          tableItem = createRow(loggerLineDTO);
+        }
+        if (tableItem != null) {
+          table.showItem(tableItem);
+        }
+      } );
+    }
   }
 
   private TableItem createRow(LoggerLineDTO loggerLineDTO) {
     TableItem tableItem;
     tableItem = new TableItem(table, SWT.NONE);
+    System.out.println(loggerLineDTO.getMessage());
     tableItem.setText(COLUMN_INDEX_TIME, simpleDateFormat.format(new Date(loggerLineDTO.getTimestamp())));
     tableItem.setText(COLUMN_INDEX_MESSAGE, loggerLineDTO.getMessage());
     return tableItem;
@@ -176,7 +181,7 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
     System.out.println("setFocus");
   }
 
-  public void showFileChooser() {
+  private void showFileChooser() {
     Display currentDisplay = Display.getCurrent();
     Shell shell = new Shell(currentDisplay);
     FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
@@ -199,6 +204,16 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
     logStreamService = new LogStreamServiceImpl(filePath);
     logStreamService.registerCallback(this);
     logStreamService.start();
+    setPartName(createTitleName(filePath));
+  }
+
+  private String createTitleName(String filePath) {
+    int length = filePath.length();
+    if (length > Constants.MAX_TITLE_LENGTH) {
+      return filePath.substring(length - Constants.MAX_TITLE_LENGTH);
+    } else {
+      return filePath;
+    }
   }
 
   private void fileFollowingStop() {
@@ -207,12 +222,19 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
       logStreamService.stop();
       logStreamService.unregisterCallback(this);
     }
+    setPartName(Constants.DEFAULT_TITLE);
   }
 
   private void clearTable() {
-    table.getDisplay().syncExec(() -> {
-      table.removeAll();
-    } );
+    if (hasTable()) {
+      table.getDisplay().syncExec(() -> {
+        table.removeAll();
+      } );
+    }
+  }
+
+  private boolean hasTable() {
+    return table != null && !table.isDisposed();
   }
 
 }
