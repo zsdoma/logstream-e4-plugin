@@ -10,9 +10,12 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -46,6 +49,10 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
   private static final String[] tableTitles = new String[] { "Time", "Message" };
 
   private SimpleDateFormat simpleDateFormat;
+
+  private Composite defaultCompositeView;
+
+  private Composite parent;
 
   public LogStreamView() {
     simpleDateFormat = new SimpleDateFormat();
@@ -100,14 +107,30 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
 
   @Override
   public void createPartControl(final Composite parent) {
+    this.parent = parent;
+    createDefaultView();
+    createActions();
+    createActionBar();
+  }
+
+  private void createTableView() {
     if (!parent.isDisposed()) {
-      createTable(parent);
-      createActions();
-      createActionBar();
+      createTable();
     }
   }
 
-  private void createTable(final Composite parent) {
+  private void createDefaultView() {
+    if (!parent.isDisposed() && !hasDefaultCompositeComponent()) {
+      defaultCompositeView = new Composite(parent, SWT.NONE);
+      defaultCompositeView.setLayout(new FillLayout());
+      Label titleLabel = new Label(defaultCompositeView, SWT.CENTER);
+      titleLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+      titleLabel.setText("No file opened");
+      titleLabel.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+    }
+  }
+
+  private void createTable() {
     table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION);
     table.setHeaderVisible(true);
     table.setLinesVisible(true);
@@ -171,7 +194,8 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
     TableItem tableItem;
     tableItem = new TableItem(table, SWT.NONE);
     System.out.println(loggerLineDTO.getMessage());
-    tableItem.setText(COLUMN_INDEX_TIME, simpleDateFormat.format(new Date(loggerLineDTO.getTimestamp())));
+    tableItem.setText(COLUMN_INDEX_TIME,
+        simpleDateFormat.format(new Date(loggerLineDTO.getTimestamp())));
     tableItem.setText(COLUMN_INDEX_MESSAGE, loggerLineDTO.getMessage());
     return tableItem;
   }
@@ -201,10 +225,19 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
   }
 
   private void fileFollowingStart(final String filePath) {
+    clearDefaultView();
+    createTableView();
+
     logStreamService = new LogStreamServiceImpl(filePath);
     logStreamService.registerCallback(this);
     logStreamService.start();
     setPartName(createTitleName(filePath));
+  }
+
+  private void clearDefaultView() {
+    if (hasDefaultCompositeComponent()) {
+      defaultCompositeView.dispose();
+    }
   }
 
   private String createTitleName(String filePath) {
@@ -218,6 +251,7 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
 
   private void fileFollowingStop() {
     clearTable();
+    createDefaultView();
     if (logStreamService != null) {
       logStreamService.stop();
       logStreamService.unregisterCallback(this);
@@ -230,11 +264,16 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
       table.getDisplay().syncExec(() -> {
         table.removeAll();
       } );
+      table.dispose();
     }
   }
 
   private boolean hasTable() {
     return table != null && !table.isDisposed();
+  }
+  
+  private boolean hasDefaultCompositeComponent() {
+    return defaultCompositeView != null && !defaultCompositeView.isDisposed();
   }
 
 }
