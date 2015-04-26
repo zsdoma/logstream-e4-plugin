@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: LogStream
 Bundle-SymbolicName: hu.zsdoma.e4.logstream.ui;singleton:=true
-Bundle-Version: 0.0.2.qualifier
+Bundle-Version: 0.0.2
 Bundle-Activator: hu.zsdoma.e4.logstream.ui.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
