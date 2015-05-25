@@ -35,6 +35,8 @@ import hu.zsdoma.e4.logstream.service.LogStreamCallback;
 import hu.zsdoma.e4.logstream.service.LogStreamService;
 import hu.zsdoma.e4.logstream.service.LogStreamServiceImpl;
 import hu.zsdoma.e4.logstream.service.LoggerLineDTO;
+import hu.zsdoma.e4.logstream.service.table.LogTableDescriptor;
+import hu.zsdoma.e4.logstream.service.table.SplitterLogTableDescriptor;
 
 public class LogStreamView extends ViewPart implements LogStreamCallback {
   private static final int COLUMN_INDEX_MESSAGE = 1;
@@ -64,6 +66,8 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
   private Map<Integer, IViewPart> pagesMap = new HashMap<>();
 
   private IAction newViewAction;
+
+  private LogTableDescriptor logTableDescriptor;
 
   public LogStreamView() {
     simpleDateFormat = new SimpleDateFormat();
@@ -188,7 +192,6 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
   private TableItem createRow(final LoggerLineDTO loggerLineDTO) {
     TableItem tableItem;
     tableItem = new TableItem(table, SWT.NONE);
-    System.out.println(loggerLineDTO.getMessage());
     tableItem.setText(COLUMN_INDEX_TIME,
         simpleDateFormat.format(new Date(loggerLineDTO.getTimestamp())));
     tableItem.setText(COLUMN_INDEX_MESSAGE, loggerLineDTO.getMessage());
@@ -196,15 +199,19 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
   }
 
   private void createTable() {
+    logTableDescriptor = new SplitterLogTableDescriptor("\\|", 5,
+        new String[] { "Level", "Wrapper", "Dist name", "Date", "Message" });
+
     table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION);
     table.setHeaderVisible(true);
     table.setLinesVisible(true);
 
-    for (String title : tableTitles) {
+    String[] columns = logTableDescriptor.getColumns();
+    for (String title : columns) {
       addTableColumn(title);
     }
 
-    for (int i = 0; i < tableTitles.length; i++) {
+    for (int i = 0; i < columns.length; i++) {
       table.getColumn(i).pack();
     }
   }
@@ -280,7 +287,7 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
       table.getDisplay().syncExec(() -> {
         TableItem tableItem = null;
         for (LoggerLineDTO loggerLineDTO : pufferedLines) {
-          tableItem = createRow(loggerLineDTO);
+          tableItem = logTableDescriptor.createTableItem(table, loggerLineDTO);
         }
         if (tableItem != null) {
           table.showItem(tableItem);
