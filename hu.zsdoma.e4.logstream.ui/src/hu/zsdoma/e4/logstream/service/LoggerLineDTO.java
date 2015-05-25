@@ -4,18 +4,18 @@ public class LoggerLineDTO {
   private long timestamp;
   private String message;
 
-  public LoggerLineDTO(long timestamp, String message) {
+  public LoggerLineDTO(final long timestamp, final String message) {
     super();
     this.timestamp = timestamp;
     this.message = message;
   }
 
-  public long getTimestamp() {
-    return timestamp;
-  }
-
   public String getMessage() {
     return message;
+  }
+
+  public long getTimestamp() {
+    return timestamp;
   }
 
 }

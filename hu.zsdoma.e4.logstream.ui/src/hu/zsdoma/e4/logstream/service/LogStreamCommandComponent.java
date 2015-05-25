@@ -6,40 +6,40 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 
 public class LogStreamCommandComponent implements CommandProvider,
-		LogStreamCallback {
-	private LogStreamService logStreamService;
+    LogStreamCallback {
+  private LogStreamService logStreamService;
 
-	public void bindLogStreamService(LogStreamService logStreamService) {
-		this.logStreamService = logStreamService;
-	}
+  public void _config(final CommandInterpreter ci) {
+    String nextArgument = ci.nextArgument();
+    if (nextArgument == null) {
+      return;
+    }
 
-	public void unbindLogStreamService(LogStreamService logStreamService) {
-		this.logStreamService = null;
-	}
+    if ("activate".equals(nextArgument)) {
+      logStreamService.registerCallback(this);
+    } else if ("deactivate".equals(nextArgument)) {
+      logStreamService.unregisterCallback(null);
+    }
+  }
 
-	@Override
-	public String getHelp() {
-		return "Fogalmazza át a kérést!";
-	}
+  public void bindLogStreamService(final LogStreamService logStreamService) {
+    this.logStreamService = logStreamService;
+  }
 
-	public void _config(CommandInterpreter ci) {
-		String nextArgument = ci.nextArgument();
-		if (nextArgument == null) {
-			return;
-		}
+  @Override
+  public String getHelp() {
+    return "Fogalmazza át a kérést!";
+  }
 
-		if ("activate".equals(nextArgument)) {
-			logStreamService.registerCallback(this);
-		} else if ("deactivate".equals(nextArgument)) {
-			logStreamService.unregisterCallback(null);
-		}
-	}
+  @Override
+  public void onStreamChanged(final List<LoggerLineDTO> pufferedLines) {
+    for (LoggerLineDTO event : pufferedLines) {
+      System.out.println(event.getMessage());
+    }
+  }
 
-	@Override
-	public void onStreamChanged(List<LoggerLineDTO> pufferedLines) {
-		for (LoggerLineDTO event : pufferedLines) {
-			System.out.println(event.getMessage());
-		}
-	}
+  public void unbindLogStreamService(final LogStreamService logStreamService) {
+    this.logStreamService = null;
+  }
 
 }

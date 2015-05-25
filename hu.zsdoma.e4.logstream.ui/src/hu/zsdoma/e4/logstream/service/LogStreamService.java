@@ -2,11 +2,11 @@ package hu.zsdoma.e4.logstream.service;
 
 public interface LogStreamService {
 
-	void start();
+  void registerCallback(LogStreamCallback logStreamCallback);
 
-	void stop();
+  void start();
 
-	void registerCallback(LogStreamCallback logStreamCallback);
+  void stop();
 
-	void unregisterCallback(LogStreamCallback logStreamCallback);
+  void unregisterCallback(LogStreamCallback logStreamCallback);
 }

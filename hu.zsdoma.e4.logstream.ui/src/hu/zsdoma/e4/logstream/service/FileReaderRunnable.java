@@ -12,8 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class FileReaderRunnable implements Runnable {
   private String fileName;
   private BufferedReader bufferedReader;
-  private final ConcurrentLinkedQueue<LoggerLineDTO> concurrentLinkedQueue =
-      new ConcurrentLinkedQueue<LoggerLineDTO>();
+  private final ConcurrentLinkedQueue<LoggerLineDTO> concurrentLinkedQueue = new ConcurrentLinkedQueue<LoggerLineDTO>();
   private boolean stop = false;
 
   public FileReaderRunnable(final String filaName) throws FileNotFoundException {

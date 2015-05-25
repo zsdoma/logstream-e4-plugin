@@ -6,8 +6,6 @@ import java.util.Objects;
 
 public class LogStreamServiceImpl implements LogStreamService,
     LogReaderEventListener {
-  private String filaName;
-
   private static class FileReaderTask implements Runnable {
 
     private static final int REFRESH_DELAY = 1000;
@@ -20,6 +18,18 @@ public class LogStreamServiceImpl implements LogStreamService,
       super();
       this.fileName = fileName;
       this.logReaderEventListener = logReaderEventListener;
+    }
+
+    /**
+     * Wait {@link #REFRESH_DELAY} to refresh file content.
+     */
+    private void refreshWaiter() {
+      try {
+        Thread.sleep(REFRESH_DELAY);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+        Thread.currentThread().interrupt();
+      }
     }
 
     @Override
@@ -47,23 +57,13 @@ public class LogStreamServiceImpl implements LogStreamService,
       }
     }
 
-    /**
-     * Wait {@link #REFRESH_DELAY} to refresh file content.
-     */
-    private void refreshWaiter() {
-      try {
-        Thread.sleep(REFRESH_DELAY);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-        Thread.currentThread().interrupt();
-      }
-    }
-
     public void stop() {
       stop = true;
     }
 
   }
+
+  private String filaName;
 
   private LogStreamCallback logStreamCallback;
   private FileReaderTask fileReaderTask;
@@ -75,16 +75,22 @@ public class LogStreamServiceImpl implements LogStreamService,
   }
 
   @Override
+  protected void finalize() throws Throwable {
+    fileReaderTask.stop();
+  }
+
+  @Override
+  public void onEvent(final List<LoggerLineDTO> lines) {
+    if (logStreamCallback != null) {
+      logStreamCallback.onStreamChanged(lines);
+    }
+  }
+
+  @Override
   public void registerCallback(final LogStreamCallback logStreamCallback) {
     Objects.requireNonNull(logStreamCallback, "LogStreamCallback is null!");
     this.logStreamCallback = logStreamCallback;
     System.out.println("Callback activated!");
-  }
-
-  @Override
-  public void unregisterCallback(final LogStreamCallback logStreamCallback) {
-    this.logStreamCallback = null;
-    System.out.println("Callback deactivated!");
   }
 
   @Override
@@ -98,15 +104,9 @@ public class LogStreamServiceImpl implements LogStreamService,
   }
 
   @Override
-  public void onEvent(final List<LoggerLineDTO> lines) {
-    if (logStreamCallback != null) {
-      logStreamCallback.onStreamChanged(lines);
-    }
-  }
-
-  @Override
-  protected void finalize() throws Throwable {
-    fileReaderTask.stop();
+  public void unregisterCallback(final LogStreamCallback logStreamCallback) {
+    this.logStreamCallback = null;
+    System.out.println("Callback deactivated!");
   }
 
 }
