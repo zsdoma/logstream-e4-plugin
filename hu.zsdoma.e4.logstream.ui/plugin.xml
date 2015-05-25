@@ -8,6 +8,7 @@
             category="hu.zsdoma.e4.logstream.ui"
             icon="icons/sample.gif"
             class="hu.zsdoma.e4.logstream.ui.view.LogStreamView"
+            allowMultiple="true"
             name="LogStreamView">
      </view>
     </extension>
