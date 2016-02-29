@@ -193,14 +193,14 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
     TableItem tableItem;
     tableItem = new TableItem(table, SWT.NONE);
     tableItem.setText(COLUMN_INDEX_TIME,
-        simpleDateFormat.format(new Date(loggerLineDTO.getTimestamp())));
-    tableItem.setText(COLUMN_INDEX_MESSAGE, loggerLineDTO.getMessage());
+        simpleDateFormat.format(new Date(loggerLineDTO.timestamp)));
+    tableItem.setText(COLUMN_INDEX_MESSAGE, loggerLineDTO.message);
     return tableItem;
   }
 
   private void createTable() {
-    logTableDescriptor = new SplitterLogTableDescriptor("\\|", 5,
-        new String[] { "Level", "Wrapper", "Dist name", "Date", "Message" });
+    logTableDescriptor = new SplitterLogTableDescriptor(" ", 4)
+        .columns(new String[] { "Date", "Time", "Level", "Message" });
 
     table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION);
     table.setHeaderVisible(true);
@@ -214,11 +214,18 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
     for (int i = 0; i < columns.length; i++) {
       table.getColumn(i).pack();
     }
+    // table.getColumn(columns.length - 1).setWidth(parent);
+    // table.layout();
+    // table.setVisible(true);
+
+    // table.composite.layout();
+    // table.update();
   }
 
   private void createTableView() {
     if (!parent.isDisposed()) {
       createTable();
+      parent.layout();
     }
   }
 

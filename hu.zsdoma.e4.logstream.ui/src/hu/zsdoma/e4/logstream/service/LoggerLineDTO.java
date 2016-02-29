@@ -1,21 +1,16 @@
 package hu.zsdoma.e4.logstream.service;
 
 public class LoggerLineDTO {
-  private long timestamp;
-  private String message;
+  public long timestamp;
+  public String message;
 
-  public LoggerLineDTO(final long timestamp, final String message) {
-    super();
+  public LoggerLineDTO timestamp(final long timestamp) {
     this.timestamp = timestamp;
+    return this;
+  }
+
+  public LoggerLineDTO message(final String message) {
     this.message = message;
+    return this;
   }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public long getTimestamp() {
-    return timestamp;
-  }
-
 }

@@ -9,10 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.eclipse.core.runtime.Status;
+
+import hu.zsdoma.e4.logstream.ui.Activator;
+
 public class FileReaderRunnable implements Runnable {
   private String fileName;
   private BufferedReader bufferedReader;
-  private final ConcurrentLinkedQueue<LoggerLineDTO> concurrentLinkedQueue = new ConcurrentLinkedQueue<LoggerLineDTO>();
+  private final ConcurrentLinkedQueue<LoggerLineDTO> concurrentLinkedQueue =
+      new ConcurrentLinkedQueue<LoggerLineDTO>();
   private boolean stop = false;
 
   public FileReaderRunnable(final String filaName) throws FileNotFoundException {
@@ -44,14 +49,11 @@ public class FileReaderRunnable implements Runnable {
       String line = null;
       while (!stop) {
         line = bufferedReader.readLine();
-        if (line == null) {
-          Thread.sleep(1000);
-        } else {
-          concurrentLinkedQueue.add(new LoggerLineDTO(System.currentTimeMillis(), line));
-        }
+        processLine(line);
       }
     } catch (IOException | InterruptedException e) {
-      e.printStackTrace(); // TODO logger
+      Activator.getDefault().getLog()
+          .log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.getMessage(), e));
     } finally {
       if (bufferedReader != null) {
         try {
@@ -60,6 +62,17 @@ public class FileReaderRunnable implements Runnable {
           e.printStackTrace();
         }
       }
+    }
+  }
+
+  private void processLine(String line) throws InterruptedException {
+    if (line == null) {
+      Thread.sleep(1000);
+    } else {
+      LoggerLineDTO loggerLineDTO =
+          new LoggerLineDTO().timestamp(System.currentTimeMillis()).message(line);
+      concurrentLinkedQueue
+          .add(loggerLineDTO);
     }
   }
 

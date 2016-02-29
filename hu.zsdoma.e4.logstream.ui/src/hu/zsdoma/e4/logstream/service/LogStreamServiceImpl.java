@@ -8,7 +8,7 @@ public class LogStreamServiceImpl implements LogStreamService,
     LogReaderEventListener {
   private static class FileReaderTask implements Runnable {
 
-    private static final int REFRESH_DELAY = 1000;
+    private static final int REFRESH_DELAY = 250;
     private String fileName;
     private LogReaderEventListener logReaderEventListener;
     private boolean stop;
