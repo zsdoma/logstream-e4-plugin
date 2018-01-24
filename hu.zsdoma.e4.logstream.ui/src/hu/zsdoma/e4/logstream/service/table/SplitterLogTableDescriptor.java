@@ -22,7 +22,10 @@ public class SplitterLogTableDescriptor implements LogTableDescriptor {
     Objects.requireNonNull("'delimiter' must be not null", delimiter);
     this.delimiter = delimiter;
     this.limit = limit;
-    this.firstLineMask = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.*";
+    //21:45:47,826 INFO  [stdout]
+    //this.firstLineMask = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.*";
+    // 2018.01.24. 21:45:47.826 INFO
+    this.firstLineMask = "^[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}\\. [0-9]{2}:[0-9]{2}:[0-9]{2}.*"; // \t[A-Z]+\\t[A-za-z]+ 
   }
 
   public SplitterLogTableDescriptor columns(final String... columns) {

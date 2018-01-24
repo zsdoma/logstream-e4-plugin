@@ -11,6 +11,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -39,11 +40,14 @@ import hu.zsdoma.e4.logstream.service.table.LogTableDescriptor;
 import hu.zsdoma.e4.logstream.service.table.SplitterLogTableDescriptor;
 
 public class LogStreamView extends ViewPart implements LogStreamCallback {
+
+  private static final int DEFAULT_COLUMN_NUMBER = 1;
+
   private static final int COLUMN_INDEX_MESSAGE = 1;
 
   private static final int COLUMN_INDEX_TIME = 0;
 
-  private static final String[] tableTitles = new String[] { "Time", "Message" };
+  private static final String[] TABLE_TITLES = new String[] { /*"Date", "Time", "Level",*/ "Message" };
 
   private LogStreamService logStreamService;
 
@@ -199,10 +203,11 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
   }
 
   private void createTable() {
-    logTableDescriptor = new SplitterLogTableDescriptor(" ", 4)
-        .columns(new String[] { "Date", "Time", "Level", "Message" });
+    logTableDescriptor =
+        new SplitterLogTableDescriptor(" ", DEFAULT_COLUMN_NUMBER).columns(TABLE_TITLES);
 
-    table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION);
+    TableViewer tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
+    table = tableViewer.getTable();
     table.setHeaderVisible(true);
     table.setLinesVisible(true);
 
@@ -291,7 +296,7 @@ public class LogStreamView extends ViewPart implements LogStreamCallback {
   @Override
   public void onStreamChanged(final List<LoggerLineDTO> pufferedLines) {
     if (hasTable()) {
-      table.getDisplay().syncExec(() -> {
+      table.getDisplay().asyncExec(() -> {
         TableItem tableItem = null;
         for (LoggerLineDTO loggerLineDTO : pufferedLines) {
           tableItem = logTableDescriptor.createTableItem(table, loggerLineDTO);
